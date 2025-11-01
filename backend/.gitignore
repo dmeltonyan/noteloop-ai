@@ -1,23 +1,6 @@
-# Dependencies
-node_modules/
-npm-debug.log*
 
-# Environment
+# Ignore runtime folders
+venv/
+__pycache__/
 .env
-.env.local
-.env.*.local
-
-# Build
-dist/
-build/
-
-# Uploads
-uploads/*
-!uploads/.gitkeep
-
-# Logs
-logs/
-*.log
-
-# OS
-.DS_Store
+*.pyc

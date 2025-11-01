@@ -1,0 +1,84 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
+import sys
+from pathlib import Path
+
+# Add parent directory to Python path
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
+# Now import
+from services.ai.adaptive_engine import AdaptiveLearningEngine
+
+load_dotenv()
+
+app = FastAPI(title="NoteLoop AI API", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+adaptive_engine = AdaptiveLearningEngine()
+
+@app.get("/")
+async def root():
+    return {
+        "message": "NoteLoop AI API",
+        "status": "running",
+        "version": "1.0.0"
+    }
+
+@app.get("/api/health")
+async def health():
+    return {
+        "status": "healthy",
+        "adaptive_engine": "loaded",
+        "concepts": adaptive_engine.num_concepts
+    }
+
+@app.post("/api/users/initialize")
+async def initialize_user(user_id: str):
+    user_state = adaptive_engine.initialize_user(user_id)
+    return {
+        "success": True,
+        "user_state": user_state,
+        "message": "User initialized with adaptive algorithm"
+    }
+
+@app.get("/api/study/next-concept")
+async def get_next_concept(user_id: str = "demo_user"):
+    user_state = adaptive_engine.initialize_user(user_id)
+    concept_idx, mastery = adaptive_engine.select_next_concept(user_state)
+    
+    return {
+        "concept_index": concept_idx,
+        "expected_mastery": mastery,
+        "difficulty": float(adaptive_engine.b_concepts[concept_idx]),
+        "message": "Next optimal concept selected by adaptive algorithm"
+    }
+
+@app.post("/api/interactions/record")
+async def record_interaction(user_id: str, concept_idx: int, outcome: int):
+    user_state = adaptive_engine.initialize_user(user_id)
+    updated_state = adaptive_engine.update_mastery(user_state, concept_idx, outcome)
+    summary = adaptive_engine.get_mastery_summary(updated_state)
+    
+    return {
+        "success": True,
+        "theta_change": updated_state["theta_change"],
+        "mastery_summary": summary,
+        "message": "Mastery updated using adaptive algorithm"
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    print(f"🚀 Starting NoteLoop AI Backend on port {port}")
+    print(f"📊 Adaptive algorithm loaded with {adaptive_engine.num_concepts} concepts")
+    uvicorn.run(app, host="0.0.0.0", port=port)
