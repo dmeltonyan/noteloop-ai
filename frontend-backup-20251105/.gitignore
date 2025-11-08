@@ -1,0 +1,6 @@
+
+# Ignore runtime folders
+node_modules/
+dist/
+.env
+

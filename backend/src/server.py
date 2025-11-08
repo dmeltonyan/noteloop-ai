@@ -1,28 +1,45 @@
+"""
+NoteLoop AI Backend Server
+"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import api_routes
+from src.routes.api_routes import router
+import os
 
-app = FastAPI(title="NoteLoop API")
+app = FastAPI(title="NoteLoop AI API")
 
-origins = [
-    "http://localhost:5173",
-    "https://your-prod-domain.com"
-]
-
+# Configure CORS - Allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+    max_age=3600,
 )
 
-app.include_router(api_routes.router, prefix="/api")
+# Include API routes
+app.include_router(router, prefix="/api")
 
 @app.get("/")
-def root():
-    return {"status": "ok"}
+async def root():
+    return {
+        "message": "NoteLoop AI API",
+        "version": "1.0.0",
+        "status": "running"
+    }
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/health")
+async def health():
+    from src.models.database import db
+    return {
+        "status": "healthy",
+        "database": {
+            "users": len(db.users),
+            "concepts": len(db.concepts),
+            "videos": len(db.videos),
+            "quizzes": len(db.quizzes)
+        }
+    }
+
+print("OK http://localhost:8000")

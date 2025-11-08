@@ -1,0 +1,6 @@
+# Free LLM Integration Dependencies
+# Install with: pip install -r requirements_llm.txt
+
+groq>=0.4.0
+
+
