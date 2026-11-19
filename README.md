@@ -1,68 +1,29 @@
 # NoteLoop AI
 
-AI-powered adaptive learning platform that transforms your notes into interactive study materials.
+An adaptive study app: upload notes, slides or PDFs and get a personalized feed of quizzes, flashcards and summaries.
 
-## 🚀 Quick Start
+> **Status: early scaffold.** This repository holds the project skeleton (Next.js frontend, API server, shared types). The ingestion and content-generation pipeline is not in this repo yet.
 
-### Prerequisites
-- Node.js v20+
-- PostgreSQL (via Supabase)
-- Git
+## Planned architecture
 
-### Setup
+| Part | Stack | Role |
+| --- | --- | --- |
+| `frontend/` | Next.js, TypeScript, Tailwind | Upload, study feed, quiz UI |
+| `backend/` | FastAPI (Python): OCR with Tesseract/OpenCV, LLM generation, Supabase | Parse documents, generate study material, validate model output against a schema |
+| `shared/` | TypeScript | Types and constants shared by both sides |
 
-1. Clone the repository:
-\`\`\`bash
-git clone https://github.com/YOUR-USERNAME/noteloop-ai.git
+## Run locally
+
+Requires Node.js 20+.
+
+```bash
+git clone https://github.com/dmeltonyan/noteloop-ai.git
 cd noteloop-ai
-\`\`\`
 
-2. Set up Frontend:
-\`\`\`bash
-cd frontend
-npm install
-cp .env.example .env.local
-# Add your environment variables
-npm run dev
-\`\`\`
+cd frontend && npm install && npm run dev   # http://localhost:3000
+cd ../backend && npm install && npm run dev # http://localhost:3001
+```
 
-3. Set up Backend:
-\`\`\`bash
-cd backend
-npm install
-cp .env.example .env
-# Add your environment variables
-npm run dev
-\`\`\`
+## License
 
-## 📁 Project Structure
-
-\`\`\`
-noteloop-ai/
-├── frontend/          # Next.js frontend
-├── backend/           # Express backend
-├── shared/            # Shared types and utilities
-├── docs/              # Documentation
-└── .github/           # GitHub workflows and templates
-\`\`\`
-
-## 👥 Team
-
-- **Developer 1**: Frontend (UI/UX)
-- **Developer 2**: Backend (API/Database)
-- **Developer 3**: AI/ML (OCR/GPT Integration)
-
-## 📖 Documentation
-
-See [docs/](./docs/) for detailed documentation.
-
-## 🤝 Contributing
-
-1. Create a feature branch: \`git checkout -b feature/your-feature\`
-2. Commit changes: \`git commit -m "Add your feature"\`
-3. Push to branch: \`git push origin feature/your-feature\`
-4. Create a Pull Request
-
-## 📝 License
-
-MIT
+MIT · Built by [David Meltonyan](https://meltonyan.dev)
